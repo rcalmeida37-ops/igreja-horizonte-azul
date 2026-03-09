@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igreja Presbiteriana do Horizonte Azul</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --royal: #1a3a6b;
+    --blue: #2563a8;
+    --sky: #4a90d9;
+    --gold: #c9a84c;
+    --gold-light: #e8c96d;
+    --cream: #f5f0e8;
+    --white: #fafaf8;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: rgba(201,168,76,0.25);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SPLASH / LOGIN ── */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    background: linear-gradient(145deg, #060e1c 0%, #0d2040 50%, #0a1628 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: fadeOut 0s ease forwards;
+  }
+  #splash.hide { animation: fadeOut 0.6s ease forwards; pointer-events:none; }
+  @keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+
+  .cross-logo {
+    width: 80px; height: 80px; position: relative; margin-bottom: 24px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .cross-logo::before {
+    content:''; position:absolute; left:50%; top:10%; transform:translateX(-50%);
+    width:12px; height:80%; background: linear-gradient(to bottom, var(--gold-light), var(--gold));
+    border-radius:3px;
+  }
+  .cross-logo::after {
+    content:''; position:absolute; top:30%; left:10%; 
+    width:80%; height:12px; background: linear-gradient(to right, var(--gold), var(--gold-light));
+    border-radius:3px;
+  }
+
+  .splash-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem,5vw,2.4rem);
+    font-weight: 700; letter-spacing: 0.02em;
+    text-align: center; color: var(--white);
+    text-shadow: 0 2px 20px rgba(201,168,76,0.4);
+    line-height: 1.2; margin-bottom: 6px;
+  }
+  .splash-sub {
+    font-size: 0.95rem; color: var(--gold); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 40px;
+  }
+
+  .login-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px;
+    width: min(360px, 90vw);
+    backdrop-filter: blur(12px);
+  }
+  .login-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; color: var(--gold); margin-bottom: 20px; text-align:center;
+  }
+  .field { margin-bottom: 16px; }
+  .field label { display:block; font-size:0.82rem; color:var(--gold-light); margin-bottom:6px; letter-spacing:0.08em; text-transform:uppercase; }
+  .field input, .field select {
+    width:100%; padding:10px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border); border-radius:8px;
+    color:var(--white); font-family:inherit; font-size:1rem;
+    outline:none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .btn-primary {
+    width:100%; padding:12px; border:none; border-radius:8px; cursor:pointer;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--navy); font-family:'Cormorant Garamond',serif;
+    font-size:1.1rem; font-weight:700; letter-spacing:0.05em;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(201,168,76,0.4); }
+  .btn-primary:active { transform:translateY(0); }
+
+  /* ── APP SHELL ── */
+  #app { display:none; min-height:100vh; padding-bottom: 80px; }
+  #app.show { display:block; }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(to right, var(--navy), var(--royal));
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top:0; z-index: 100;
+  }
+  .header-logo { display:flex; align-items:center; gap:12px; }
+  .mini-cross { width:32px; height:32px; position:relative; flex-shrink:0; }
+  .mini-cross::before {
+    content:''; position:absolute; left:50%; top:5%; transform:translateX(-50%);
+    width:5px; height:90%; background:var(--gold); border-radius:2px;
+  }
+  .mini-cross::after {
+    content:''; position:absolute; top:28%; left:5%;
+    width:90%; height:5px; background:var(--gold); border-radius:2px;
+  }
+  .header-title { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:700; line-height:1.2; }
+  .header-title span { display:block; font-size:0.7rem; color:var(--gold); letter-spacing:0.1em; text-transform:uppercase; font-family:'Crimson Pro',serif; font-weight:300; }
+  .user-badge {
+    background:rgba(201,168,76,0.15); border:1px solid var(--border);
+    border-radius:20px; padding:4px 12px; font-size:0.8rem; color:var(--gold-light);
+    cursor:pointer;
+  }
+
+  /* ── NAV TABS ── */
+  nav {
+    position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background: linear-gradient(to top, var(--navy), rgba(10,22,40,0.98));
+    border-top:1px solid var(--border);
+    display:flex;
+  }
+  nav button {
+    flex:1; padding:10px 4px 14px; border:none; background:none; cursor:pointer;
+    color:var(--muted); font-family:'Crimson Pro',serif; font-size:0.7rem;
+    letter-spacing:0.05em; text-transform:uppercase;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    transition: color 0.2s;
+  }
+  nav button.active { color:var(--gold); }
+  nav button svg { width:22px; height:22px; }
+
+  /* ── SECTIONS ── */
+  .section { display:none; padding:20px; max-width:800px; margin:0 auto; }
+  .section.active { display:block; }
+
+  .section-header {
+    margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);
+  }
+  .section-header h2 {
+    font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700;
+    color:var(--white); line-height:1;
+  }
+  .section-header p { color:var(--gold); font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; margin-top:4px; }
+
+  /* ── HOME / DEVOCIONAL ── */
+  .verse-card {
+    background: linear-gradient(135deg, rgba(37,99,168,0.25), rgba(26,58,107,0.4));
+    border:1px solid var(--border); border-radius:16px; padding:28px;
+    text-align:center; margin-bottom:20px; position:relative; overflow:hidden;
+  }
+  .verse-card::before {
+    content:'"'; position:absolute; top:-10px; left:16px;
+    font-size:8rem; color:rgba(201,168,76,0.1); font-family:'Cormorant Garamond',serif;
+    line-height:1;
+  }
+  .verse-text {
+    font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-style:italic;
+    line-height:1.6; color:var(--white); margin-bottom:12px; position:relative; z-index:1;
+  }
+  .verse-ref { color:var(--gold); font-size:0.85rem; letter-spacing:0.1em; }
+
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+  @media(max-width:480px) { .grid-2 { grid-template-columns:1fr; } }
+
+  .info-card {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-radius:12px; padding:18px; cursor:pointer; transition:all 0.2s;
+  }
+  .info-card:hover { background:rgba(255,255,255,0.07); border-color:var(--gold); transform:translateY(-2px); }
+  .info-card .ic-icon { font-size:1.8rem; margin-bottom:8px; }
+  .info-card h4 { font-family:'Cormorant Garamond',serif; font-size:1.05rem; margin-bottom:4px; }
+  .info-card p { font-size:0.82rem; color:var(--muted); line-height:1.4; }
+
+  .prayer-btn {
+    width:100%; padding:14px; border:none; border-radius:12px; cursor:pointer;
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.1));
+    border:1px solid var(--gold); color:var(--gold-light);
+    font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600;
+    transition:all 0.2s; margin-bottom:14px;
+  }
+  .prayer-btn:hover { background:rgba(201,168,76,0.25); }
+
+  /* ── BÍBLIA ── */
+  .bible-controls {
+    display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .bible-controls select {
+    flex:1; min-width:120px; padding:9px 12px;
+    background:rgba(255,255,255,0.06); border:1px solid var(--border);
+    border-radius:8px; color:var(--white); font-family:inherit; font-size:0.95rem;
+    outline:none; cursor:pointer;
+  }
+  .bible-controls select:focus { border-color:var(--gold); }
+  .bible-controls select option { background:var(--navy); }
+
+  .bible-text-area {
+    background:rgba(255,255,255,0.03); border:1px solid var(--border);
+    border-radius:12px; padding:24px; line-height:1.9; font-size:1.05rem;
+    max-height:55vh; overflow-y:auto; color:var(--cream);
+  }
+  .bible-text-area::-webkit-scrollbar { width:4px; }
+  .bible-text-area::-webkit-scrollbar-track { background:transparent; }
+  .bible-text-area::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
+
+  .verse-line { margin-bottom:8px; }
+  .verse-num { color:var(--gold); font-size:0.78rem; font-weight:700; margin-right:6px; vertical-align:super; }
+
+  .bible-nav { display:flex; gap:10px; margin-top:14px; }
+  .bible-nav button {
+    flex:1; padding:10px; border:1px solid var(--border); background:rgba(255,255,255,0.04);
+    border-radius:8px; color:var(--white); cursor:pointer; font-family:inherit; font-size:0.9rem;
+    transition:all 0.2s;
+  }
+  .bible-nav button:hover { background:rgba(201,168,76,0.15); border-color:var(--gold); }
+
+  /* ── CONFISSÕES ── */
+  .accordion-item {
+    border:1px solid var(--border); border-radius:12px; margin-bottom:12px; overflow:hidden;
+  }
+  .accordion-header {
+    padding:16px 18px; cursor:pointer;
+    background:rgba(255,255,255,0.04); display:flex; justify-content:space-between; align-items:center;
+    transition:background 0.2s;
+  }
+  .accordion-header:hover { background:rgba(255,255,255,0.08); }
+  .accordion-header h3 { font-family:'Cormorant Garamond',serif; font-size:1.1rem; }
+  .accordion-header .chev { color:var(--gold); font-size:1.2rem; transition:transform 0.3s; }
+  .accordion-header.open .chev { transform:rotate(180deg); }
+  .accordion-body {
+    display:none; padding:16px 18px; background:rgba(0,0,0,0.2);
+    font-size:0.95rem; line-height:1.8; color:var(--cream);
+    border-top:1px solid var(--border);
+  }
+  .accordion-body.open { display:block; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:20px; font-size:0.72rem; margin-bottom:8px; letter-spacing:0.06em; }
+  .tag.blue { background:rgba(37,99,168,0.3); border:1px solid rgba(37,99,168,0.5); color:var(--sky); }
+  .tag.gold { background:rgba(201,168,76,0.2); border:1px solid var(--border); color:var(--gold); }
+
+  /* ── AGENDA ── */
+  .calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .calendar-header h3 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; }
+  .cal-nav { background:none; border:1px solid var(--border); color:var(--white); 
+    width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem; transition:all 0.2s; }
+  .cal-nav:hover { background:rgba(201,168,76,0.15); border-color:var(--gold); }
+
+  .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:20px; }
+  .cal-day-name { text-align:center; font-size:0.7rem; color:var(--gold); letter-spacing:0.08em; padding:6px 0; text-transform:uppercase; }
+  .cal-day {
+    aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-size:0.85rem; cursor:pointer; transition:all 0.2s; position:relative;
+  }
+  .cal-day:hover { background:rgba(255,255,255,0.08); }
+  .cal-day.today { background:var(--gold); color:var(--navy); font-weight:700; }
+  .cal-day.has-event::after {
+    content:''; position:absolute; bottom:4px; left:50%; transform:translateX(-50%);
+    width:4px; height:4px; border-radius:50%; background:var(--sky);
+  }
+  .cal-day.today.has-event::after { background:var(--navy); }
+  .cal-day.other-month { color:rgba(255,255,255,0.2); }
+
+  .events-list { }
+  .event-item {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-left:3px solid var(--gold); border-radius:0 12px 12px 0;
+    padding:14px 16px; margin-bottom:10px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .event-time { color:var(--gold); font-size:0.82rem; white-space:nowrap; font-weight:600; min-width:60px; padding-top:2px; }
+  .event-info h4 { font-family:'Cormorant Garamond',serif; font-size:1.05rem; margin-bottom:2px; }
+  .event-info p { font-size:0.82rem; color:var(--muted); }
+
+  /* ── PRESBITÉRIO ── */
+  .presby-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .presby-tab {
+    padding:7px 14px; border-radius:20px; border:1px solid var(--border);
+    background:none; color:var(--muted); cursor:pointer; font-family:inherit; font-size:0.85rem;
+    transition:all 0.2s;
+  }
+  .presby-tab.active { background:rgba(201,168,76,0.2); border-color:var(--gold); color:var(--gold); }
+
+  .presby-content { display:none; }
+  .presby-content.active { display:block; }
+
+  .member-card {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-radius:12px; padding:16px; margin-bottom:10px; display:flex; gap:14px; align-items:center;
+  }
+  .member-avatar {
+    width:48px; height:48px; border-radius:50%;
+    background:linear-gradient(135deg,var(--royal),var(--blue));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:700;
+    border:2px solid var(--border); flex-shrink:0; color:var(--gold);
+  }
+  .member-info h4 { font-family:'Cormorant Garamond',serif; font-size:1rem; margin-bottom:2px; }
+  .member-info p { font-size:0.8rem; color:var(--muted); }
+  .member-role { display:inline-block; margin-top:4px; padding:2px 8px; border-radius:10px; font-size:0.72rem; background:rgba(37,99,168,0.25); border:1px solid rgba(37,99,168,0.4); color:var(--sky); }
+
+  .escala-card {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px;
+  }
+  .escala-header { padding:12px 16px; background:rgba(37,99,168,0.2); border-bottom:1px solid var(--border); }
+  .escala-header h4 { font-family:'Cormorant Garamond',serif; font-size:1.1rem; }
+  .escala-header span { font-size:0.78rem; color:var(--gold); }
+  .escala-row { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .escala-row:last-child { border-bottom:none; }
+  .escala-func { font-size:0.82rem; color:var(--muted); }
+  .escala-name { font-size:0.9rem; }
+
+  /* ── CRESCIMENTO ── */
+  .progress-card {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-radius:12px; padding:18px; margin-bottom:12px;
+  }
+  .progress-card h4 { font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:12px; display:flex; justify-content:space-between; }
+  .progress-card h4 span { font-size:0.85rem; color:var(--gold); font-family:'Crimson Pro',serif; }
+  .progress-bar { height:8px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:6px; }
+  .progress-fill { height:100%; border-radius:4px; background:linear-gradient(to right,var(--royal),var(--gold)); transition:width 0.8s ease; }
+  .progress-label { font-size:0.78rem; color:var(--muted); }
+
+  .devo-plan {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px;
+  }
+  .devo-plan-header { padding:14px 16px; background:rgba(201,168,76,0.1); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .devo-plan-header h4 { font-family:'Cormorant Garamond',serif; font-size:1.05rem; }
+  .devo-item { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.2s; }
+  .devo-item:last-child { border-bottom:none; }
+  .devo-item:hover { background:rgba(255,255,255,0.04); }
+  .devo-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+  .devo-check.done { background:var(--gold); border-color:var(--gold); color:var(--navy); font-size:0.75rem; }
+  .devo-text { font-size:0.9rem; }
+  .devo-ref { font-size:0.78rem; color:var(--gold); }
+
+  /* ── SCROLL ── */
+  *::-webkit-scrollbar { width:6px; }
+  *::-webkit-scrollbar-track { background:transparent; }
+  *::-webkit-scrollbar-thumb { background:rgba(201,168,76,0.3); border-radius:3px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500;
+    display:none; align-items:center; justify-content:center; padding:20px;
+    backdrop-filter:blur(4px);
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--navy); border:1px solid var(--border); border-radius:16px;
+    padding:24px; width:100%; max-width:420px; max-height:80vh; overflow-y:auto;
+  }
+  .modal h3 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; margin-bottom:16px; color:var(--gold); }
+  .modal-close { float:right; background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.4rem; }
+  textarea.field-input {
+    width:100%; padding:10px 14px; background:rgba(255,255,255,0.06);
+    border:1px solid var(--border); border-radius:8px; color:var(--white);
+    font-family:inherit; font-size:0.95rem; outline:none; resize:vertical; min-height:100px;
+  }
+  textarea.field-input:focus { border-color:var(--gold); }
+
+  .notice-banner {
+    background:linear-gradient(135deg,rgba(37,99,168,0.3),rgba(26,58,107,0.2));
+    border:1px solid rgba(74,144,217,0.3); border-radius:10px;
+    padding:12px 14px; margin-bottom:10px; font-size:0.88rem; line-height:1.5;
+  }
+  .notice-banner strong { color:var(--sky); display:block; margin-bottom:2px; font-family:'Cormorant Garamond',serif; font-size:1rem; }
+</style>
+</head>
+<body>
+
+<!-- ── SPLASH / LOGIN ── -->
+<div id="splash">
+  <div class="cross-logo"></div>
+  <div class="splash-title">Igreja Presbiteriana<br>do Horizonte Azul</div>
+  <div class="splash-sub">Área dos Membros</div>
+
+  <div class="login-card">
+    <h3>Acesso dos Membros</h3>
+    <div class="field">
+      <label>Nome Completo</label>
+      <input type="text" id="loginName" placeholder="Seu nome completo">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <p style="text-align:center;font-size:0.78rem;color:var(--muted);margin-top:12px;">
+      Senha padrão: <strong style="color:var(--gold)">horizonte2025</strong><br>Solicite ao diácono para alterar.
+    </p>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+  <!-- Header -->
+  <header>
+    <div class="header-logo">
+      <div class="mini-cross"></div>
+      <div class="header-title">
+        Horizonte Azul
+        <span>Igreja Presbiteriana</span>
+      </div>
+    </div>
+    <div class="user-badge" id="userBadge" onclick="doLogout()">Sair ↩</div>
+  </header>
+
+  <!-- Sections -->
+
+  <!-- HOME -->
+  <div class="section active" id="sec-home">
+    <div class="verse-card" id="verseCard">
+      <div class="verse-text" id="verseText">Carregando versículo...</div>
+      <div class="verse-ref" id="verseRef"></div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div class="notice-banner">
+        <strong>📢 Aviso da Semana</strong>
+        Culto de Consagração neste domingo às 10h. Traga sua família!
+      </div>
+      <div class="notice-banner">
+        <strong>📚 Estudo Bíblico</strong>
+        Quarta-feira às 19h30 — Série: "A Soberania de Deus em Romanos"
+      </div>
+      <div class="notice-banner">
+        <strong>🙏 Pedido de Oração</strong>
+        Irmã Maria Santos em recuperação. Ore pela sua família.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="info-card" onclick="goTo('agenda')">
+        <div class="ic-icon">📅</div>
+        <h4>Próximos Eventos</h4>
+        <p>Confira a programação da semana</p>
+      </div>
+      <div class="info-card" onclick="goTo('biblia')">
+        <div class="ic-icon">📖</div>
+        <h4>Bíblia Sagrada</h4>
+        <p>Leia em várias versões</p>
+      </div>
+      <div class="info-card" onclick="goTo('confissoes')">
+        <div class="ic-icon">✝️</div>
+        <h4>Confissão</h4>
+        <p>Westminster & Catecismos</p>
+      </div>
+      <div class="info-card" onclick="goTo('crescimento')">
+        <div class="ic-icon">🌱</div>
+        <h4>Crescimento</h4>
+        <p>Planos devocionais</p>
+      </div>
+    </div>
+
+    <button class="prayer-btn" onclick="openModal('prayerModal')">🙏 Enviar Pedido de Oração</button>
+    <button class="prayer-btn" onclick="openModal('contactModal')" style="margin-bottom:0;">✉️ Falar com um Pastor</button>
+  </div>
+
+  <!-- BÍBLIA -->
+  <div class="section" id="sec-biblia">
+    <div class="section-header">
+      <h2>Bíblia Sagrada</h2>
+      <p>Múltiplas versões</p>
+    </div>
+
+    <div class="bible-controls">
+      <select id="bibleVersion" onchange="loadBible()">
+        <option value="NVI">NVI — Nova Versão Internacional</option>
+        <option value="ARC">ARA — Almeida Revista e Atualizada</option>
+        <option value="ACF">ACF — Almeida Corrigida Fiel</option>
+        <option value="NVT">NVT — Nova Versão Transformadora</option>
+        <option value="MSG">BJ — Bíblia do Semear</option>
+      </select>
+    </div>
+    <div class="bible-controls">
+      <select id="bibleBook" onchange="loadBible()">
+        <option value="gn">Gênesis</option><option value="ex">Êxodo</option>
+        <option value="lv">Levítico</option><option value="nm">Números</option>
+        <option value="dt">Deuteronômio</option><option value="js">Josué</option>
+        <option value="jz">Juízes</option><option value="rt">Rute</option>
+        <option value="1sm">1 Samuel</option><option value="2sm">2 Samuel</option>
+        <option value="sl">Salmos</option><option value="pv">Provérbios</option>
+        <option value="ec">Eclesiastes</option><option value="is">Isaías</option>
+        <option value="jr">Jeremias</option><option value="dn">Daniel</option>
+        <option value="mt">Mateus</option><option value="mc">Marcos</option>
+        <option value="lc">Lucas</option><option value="jo">João</option>
+        <option value="at">Atos</option><option value="rm">Romanos</option>
+        <option value="1co">1 Coríntios</option><option value="2co">2 Coríntios</option>
+        <option value="gl">Gálatas</option><option value="ef">Efésios</option>
+        <option value="fp">Filipenses</option><option value="cl">Colossenses</option>
+        <option value="1ts">1 Tessalonicenses</option><option value="hb">Hebreus</option>
+        <option value="tg">Tiago</option><option value="1pe">1 Pedro</option>
+        <option value="1jo">1 João</option><option value="ap">Apocalipse</option>
+      </select>
+      <select id="bibleChapter" onchange="loadBible()" style="max-width:90px;"></select>
+    </div>
+
+    <div class="bible-text-area" id="bibleText">
+      <p style="color:var(--muted);text-align:center;padding:20px;">Selecione um livro e capítulo para ler</p>
+    </div>
+
+    <div class="bible-nav">
+      <button onclick="prevChapter()">← Anterior</button>
+      <button onclick="nextChapter()">Próximo →</button>
+    </div>
+
+    <p style="font-size:0.75rem;color:var(--muted);text-align:center;margin-top:12px;">
+      Textos carregados via API bíblica pública · bible-api.com
+    </p>
+  </div>
+
+  <!-- CONFISSÕES -->
+  <div class="section" id="sec-confissoes">
+    <div class="section-header">
+      <h2>Padrões Confessionais</h2>
+      <p>Sistema Presbiteriano de Westminster</p>
+    </div>
+
+    <div class="presby-tabs">
+      <button class="presby-tab active" onclick="showPresby('westminster')">Confissão</button>
+      <button class="presby-tab" onclick="showPresby('catMaior')">Catecismo Maior</button>
+      <button class="presby-tab" onclick="showPresby('catBreve')">Catecismo Breve</button>
+      <button class="presby-tab" onclick="showPresby('governo')">Governo</button>
+    </div>
+
+    <div class="presby-content active" id="presby-westminster">
+      <div id="westminsterList"></div>
+    </div>
+    <div class="presby-content" id="presby-catMaior">
+      <div id="catMaiorList"></div>
+    </div>
+    <div class="presby-content" id="presby-catBreve">
+      <div id="catBreveList"></div>
+    </div>
+    <div class="presby-content" id="presby-governo">
+      <div id="governoList"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="section" id="sec-agenda">
+    <div class="section-header">
+      <h2>Agenda da Igreja</h2>
+      <p>Programação mensal</p>
+    </div>
+
+    <div class="calendar-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+      <h3 id="calMonthLabel"></h3>
+      <button class="cal-nav" onclick="changeMonth(1)">›</button>
+    </div>
+
+    <div class="calendar-grid" id="calGrid"></div>
+
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:14px;color:var(--gold);">
+      Eventos do Mês
+    </h3>
+    <div id="eventsList"></div>
+  </div>
+
+  <!-- PRESBITÉRIO -->
+  <div class="section" id="sec-presby">
+    <div class="section-header">
+      <h2>Presbitério</h2>
+      <p>Governo & Serviço da Igreja</p>
+    </div>
+
+    <div class="presby-tabs">
+      <button class="presby-tab active" onclick="showPresbyTab('lideranca')">Liderança</button>
+      <button class="presby-tab" onclick="showPresbyTab('escala')">Escala</button>
+      <button class="presby-tab" onclick="showPresbyTab('membros')">Membros</button>
+    </div>
+
+    <div class="presby-content active" id="presby-lideranca">
+      <div class="member-card">
+        <div class="member-avatar">PR</div>
+        <div class="member-info">
+          <h4>Rev. Paulo Ricardo</h4>
+          <p>Pastor Titular</p>
+          <div class="member-role">Pastor Ordenado</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">AM</div>
+        <div class="member-info">
+          <h4>Éld. André Meireles</h4>
+          <p>Presbítero Governante</p>
+          <div class="member-role">Presbítero</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">CS</div>
+        <div class="member-info">
+          <h4>Éld. Carlos Silva</h4>
+          <p>Presbítero Governante</p>
+          <div class="member-role">Presbítero</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">JF</div>
+        <div class="member-info">
+          <h4>Dc. João Ferreira</h4>
+          <p>Diácono — Finanças</p>
+          <div class="member-role">Diácono</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">MO</div>
+        <div class="member-info">
+          <h4>Dc. Marcos Oliveira</h4>
+          <p>Diácono — Misericórdia</p>
+          <div class="member-role">Diácono</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="presby-content" id="presby-escala">
+      <div class="escala-card">
+        <div class="escala-header">
+          <h4>Culto Dominical — 09/03/2025</h4>
+          <span>Domingo às 10h00</span>
+        </div>
+        <div class="escala-row"><span class="escala-func">Pregação</span><span class="escala-name">Rev. Paulo Ricardo</span></div>
+        <div class="escala-row"><span class="escala-func">Liderança do Louvor</span><span class="escala-name">Irmã Ana Lima</span></div>
+        <div class="escala-row"><span class="escala-func">Recepção</span><span class="escala-name">Familia Souza</span></div>
+        <div class="escala-row"><span class="escala-func">Escola Dominical (0-6)</span><span class="escala-name">Irmã Cláudia</span></div>
+        <div class="escala-row"><span class="escala-func">Escola Dominical (7-12)</span><span class="escala-name">Irmão Rafael</span></div>
+        <div class="escala-row"><span class="escala-func">Dízimos & Ofertas</span><span class="escala-name">Dc. João Ferreira</span></div>
+      </div>
+      <div class="escala-card">
+        <div class="escala-header">
+          <h4>Culto Dominical — 16/03/2025</h4>
+          <span>Domingo às 10h00</span>
+        </div>
+        <div class="escala-row"><span class="escala-func">Pregação</span><span class="escala-name">Rev. Paulo Ricardo</span></div>
+        <div class="escala-row"><span class="escala-func">Liderança do Louvor</span><span class="escala-name">Irmão Tiago Costa</span></div>
+        <div class="escala-row"><span class="escala-func">Recepção</span><span class="escala-name">Familia Almeida</span></div>
+        <div class="escala-row"><span class="escala-func">Escola Dominical (0-6)</span><span class="escala-name">Irmã Patrícia</span></div>
+        <div class="escala-row"><span class="escala-func">Escola Dominical (7-12)</span><span class="escala-name">Irmã Fernanda</span></div>
+        <div class="escala-row"><span class="escala-func">Dízimos & Ofertas</span><span class="escala-name">Dc. Marcos Oliveira</span></div>
+      </div>
+    </div>
+
+    <div class="presby-content" id="presby-membros">
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;">
+        Lista resumida dos membros ativos da congregação.
+      </p>
+      <div id="membList"></div>
+    </div>
+  </div>
+
+  <!-- CRESCIMENTO -->
+  <div class="section" id="sec-crescimento">
+    <div class="section-header">
+      <h2>Crescimento Espiritual</h2>
+      <p>Planos & Disciplinas</p>
+    </div>
+
+    <div class="progress-card">
+      <h4>Leitura Bíblica Anual <span id="pct">0%</span></h4>
+      <div class="progress-bar"><div class="progress-fill" id="progBar" style="width:0%"></div></div>
+      <div class="progress-label" id="progLabel">Clique nos dias abaixo para marcar</div>
+    </div>
+
+    <div class="devo-plan">
+      <div class="devo-plan-header">
+        <h4>📖 Plano Semanal — Salmos</h4>
+        <span style="font-size:0.78rem;color:var(--gold)">Semana atual</span>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Segunda — Salmo 1</div><div class="devo-ref">Bem-aventurado o homem...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Terça — Salmo 8</div><div class="devo-ref">Ó SENHOR, Senhor nosso...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Quarta — Salmo 23</div><div class="devo-ref">O SENHOR é o meu pastor...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Quinta — Salmo 51</div><div class="devo-ref">Tem misericórdia de mim...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Sexta — Salmo 90</div><div class="devo-ref">Senhor, tu tens sido...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Sábado — Salmo 119:1-40</div><div class="devo-ref">Bem-aventurados os retos...</div></div>
+      </div>
+      <div class="devo-item" onclick="toggleDevo(this)">
+        <div class="devo-check">☐</div>
+        <div><div class="devo-text">Domingo — Salmo 150</div><div class="devo-ref">Louvai ao Senhor!</div></div>
+      </div>
+    </div>
+
+    <div class="devo-plan">
+      <div class="devo-plan-header">
+        <h4>🙏 Guia de Oração Semanal</h4>
+      </div>
+      <div class="devo-item"><div class="devo-check done">✓</div><div><div class="devo-text">Segunda — Missões Mundiais</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Terça — Líderes da Igreja</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Quarta — Famílias da Congregação</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Quinta — Enfermos e Necessitados</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Sexta — Governo e Autoridades</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Sábado — Família Própria</div></div></div>
+      <div class="devo-item" onclick="toggleDevo(this)"><div class="devo-check">☐</div><div><div class="devo-text">Domingo — Culto e Adoração</div></div></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- BOTTOM NAV -->
+<nav id="bottomNav">
+  <button class="active" onclick="goTo('home')" id="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Início
+  </button>
+  <button onclick="goTo('biblia')" id="nav-biblia">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    Bíblia
+  </button>
+  <button onclick="goTo('confissoes')" id="nav-confissoes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Confissões
+  </button>
+  <button onclick="goTo('agenda')" id="nav-agenda">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Agenda
+  </button>
+  <button onclick="goTo('presby')" id="nav-presby">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Presbitério
+  </button>
+  <button onclick="goTo('crescimento')" id="nav-crescimento">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Crescer
+  </button>
+</nav>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="prayerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('prayerModal')">×</button>
+    <h3>🙏 Pedido de Oração</h3>
+    <div class="field"><label>Seu Nome</label><input type="text" id="prayerName" placeholder="Nome (opcional — pode ser anônimo)"></div>
+    <div class="field"><label>Pedido</label><textarea class="field-input" id="prayerText" placeholder="Descreva seu pedido de oração..."></textarea></div>
+    <div class="field">
+      <label>Compartilhar com</label>
+      <select id="prayerShare" style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:inherit;font-size:1rem;outline:none;">
+        <option>Apenas os Pastores e Presbíteros</option>
+        <option>Toda a congregação</option>
+        <option>Somente os diáconos</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="submitPrayer()">Enviar Pedido</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="contactModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('contactModal')">×</button>
+    <h3>✉️ Mensagem Pastoral</h3>
+    <div class="field"><label>Assunto</label><input type="text" id="contactSubj" placeholder="Assunto da mensagem"></div>
+    <div class="field"><label>Mensagem</label><textarea class="field-input" id="contactMsg" placeholder="Escreva sua mensagem..."></textarea></div>
+    <button class="btn-primary" onclick="submitContact()">Enviar Mensagem</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+
+const VERSES = [
+  { t: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.", r: "João 3:16" },
+  { t: "O Senhor é o meu pastor; nada me faltará. Deitar-me faz em verdes pastos; guia-me mansamente a águas tranquilas.", r: "Salmo 23:1-2" },
+  { t: "Tudo posso naquele que me fortalece.", r: "Filipenses 4:13" },
+  { t: "Buscai primeiro o reino de Deus, e a sua justiça, e todas estas coisas vos serão acrescentadas.", r: "Mateus 6:33" },
+  { t: "Confia no Senhor de todo o teu coração e não te apoies na tua própria inteligência.", r: "Provérbios 3:5" },
+  { t: "Eu sou o caminho, e a verdade, e a vida. Ninguém vem ao Pai senão por mim.", r: "João 14:6" },
+  { t: "Sede fortes e corajosos! Não temais, nem vos atemorizeis diante deles; porque o Senhor teu Deus é o que vai contigo.", r: "Deuteronômio 31:6" },
+];
+
+const WESTMINSTER = [
+  { cap: "Capítulo I — Das Sagradas Escrituras", tag: "Escrituras", body: "As Sagradas Escrituras, compreendendo os livros do Antigo e Novo Testamentos, são a Palavra de Deus escrita. A autoridade das Sagradas Escrituras, pela qual deve ser crida e obedecida, não depende do testemunho de qualquer homem ou Igreja, mas unicamente de Deus, que é a própria verdade e seu Autor; portanto, devem ser recebidas porque são a Palavra de Deus. O juízo infalível de toda controvérsia religiosa e o exame de todos os cânones das igrejas, as opiniões dos escritores antigos, as doutrinas dos homens e os espíritos privados, pertencem somente ao Espírito Santo falando nas Escrituras." },
+  { cap: "Capítulo II — De Deus e da Santíssima Trindade", tag: "Doutrina de Deus", body: "Há somente um Deus vivo e verdadeiro, que é infinito em ser e perfeição, um Espírito puríssimo, invisível, sem corpo, membros ou paixões; imutável, imensurável, eterno, incompreensível, onipotente, onisciente, santíssimo, livre, absoluto. Deus tem em si mesmo e de si mesmo toda vida, glória, bondade e bem-aventurança. Na unidade da Divindade há três Pessoas, de uma substância, poder e eternidade: Deus Pai, Deus Filho e Deus Espírito Santo." },
+  { cap: "Capítulo III — Do Decreto Eterno de Deus", tag: "Predestinação", body: "Desde toda a eternidade, por meio do conselho sapientíssimo e santíssimo de sua própria vontade, Deus ordenou livremente e imutavelmente tudo o que acontece; contudo, por isso ele não é o autor do pecado, nem é violentada a vontade das criaturas, tampouco é tirada a liberdade ou contingência das causas segundas, mas antes estabelecida. Deus, cumprindo seu propósito eterno, elegeu em Cristo, antes da fundação do mundo, para a glória eterna, um número certo e definido de homens e anjos." },
+  { cap: "Capítulo IV — Da Criação", tag: "Criação", body: "Aprouve a Deus Pai, Filho e Espírito Santo, pela manifestação da glória de seu poder, sabedoria e bondade eternos, criar o mundo e todas as coisas nele, sejam visíveis ou invisíveis, em seis dias, e todas muito boas. Depois de ter criado todas as outras criaturas, Deus criou o homem, varão e fêmea, com almas racionais e imortais, dotados de conhecimento, justiça e santidade, à imagem de Deus." },
+  { cap: "Capítulo V — Da Providência", tag: "Providência", body: "Deus, o grande Criador de tudo, sustenta, dirige, dispõe e governa todas as criaturas, ações e coisas, desde a maior até a menor, por meio de sua santíssima providência, segundo sua infalível presciência e livre e imutável vontade, para o louvor de sua glória." },
+  { cap: "Capítulo VI — Da Queda do Homem, do Pecado e do seu Castigo", tag: "Pecado Original", body: "Nossos primeiros pais foram tentados por Satanás e pecaram ao comer o fruto proibido. Este pecado de Adão e Eva foi imputado a toda a sua posteridade, que neles pecou e caiu com eles. Por esta queda original, a comunhão com Deus foi corrompida, e sua natureza toda se corrompeu, ficando eles mortos no pecado, totalmente inaptos e contrários a tudo quanto é bom, e completamente inclinados a todo o mal." },
+  { cap: "Capítulo VII — Do Pacto com o Homem", tag: "Pacto da Graça", body: "A distância entre Deus e a criatura é tão grande que, embora as criaturas racionais lhe devam obediência como Criador, elas jamais poderiam ter qualquer fruto ou recompensa dEle senão por alguma condescendência voluntária da parte de Deus, a qual Ele lhes aprouve exprimir por meio de um pacto. Deus revelou como o homem poderia ter comunhão e vida com Ele. Após a queda, o Senhor estabeleceu o Pacto da Graça, no qual ele oferece livremente vida e salvação por meio de Jesus Cristo." },
+  { cap: "Capítulo VIII — De Cristo, o Mediador", tag: "Cristologia", body: "Aprouve a Deus, em seu propósito eterno, escolher e ordenar o Senhor Jesus, seu Filho unigênito, para ser o Mediador entre Deus e o homem. O Filho de Deus, a segunda Pessoa da Trindade, sendo verdadeiro e eterno Deus, da mesma substância e igual ao Pai, quando chegou a plenitude dos tempos, se fez homem, sendo concebido pelo poder do Espírito Santo, no seio da virgem Maria. Jesus Cristo é o único e suficiente Redentor, sacerdote, profeta e rei de seu povo." },
+  { cap: "Capítulo XIV — Da Fé Salvadora", tag: "Fé & Salvação", body: "A graça da fé pela qual os eleitos são habilitados a crer para salvação de suas almas é obra do Espírito de Cristo em seus corações, e é ordinariamente produzida pelo ministério da Palavra. Por esta fé o cristão crê ser verdadeiro tudo o que é revelado na Palavra, e age diferentemente conforme o que cada passagem em particular contém: obedecendo aos mandamentos, tremendo ante as ameaças, e abraçando as promessas de Deus." },
+  { cap: "Capítulo XXV — Da Igreja", tag: "Eclesiologia", body: "A Igreja Católica ou Universal, que é invisível, consiste de todo o número dos eleitos que foram, são ou serão reunidos em um só corpo sob Cristo, Cabeça da Igreja; e é a esposa, o corpo, a plenitude dAquele que enche tudo em todos. A Igreja visível, que é também Católica ou Universal sob o Evangelho, consiste de todos aqueles que em todo o mundo professam a verdadeira religião, juntamente com seus filhos." },
+];
+
+const CAT_BREVE = [
+  { n:"P.1", p:"Qual é o fim principal do homem?", r:"O fim principal do homem é glorificar a Deus e gozar d'Ele para sempre." },
+  { n:"P.2", p:"Que regra nos deu Deus para nos indicar como Lhe podemos glorificar e gozar?", r:"A Palavra de Deus, contida nas Escrituras do Antigo e do Novo Testamento, é a única regra para nos indicar como Lhe podemos glorificar e gozar." },
+  { n:"P.3", p:"Que é o que principalmente ensinam as Escrituras?", r:"O que principalmente ensinam as Escrituras é o que o homem deve crer acerca de Deus, e que deveres Deus lhe requer." },
+  { n:"P.4", p:"O que é Deus?", r:"Deus é um Espírito, infinito, eterno e imutável no seu Ser, sabedoria, poder, santidade, justiça, bondade e verdade." },
+  { n:"P.5", p:"Há mais do que um Deus?", r:"Há somente um Deus, o Deus vivo e verdadeiro." },
+  { n:"P.6", p:"Quantas pessoas há na Divindade?", r:"Na Divindade há três pessoas: o Pai, o Filho e o Espírito Santo; e estas três são um Deus, da mesma substância, iguais em poder e glória." },
+  { n:"P.7", p:"O que são os decretos de Deus?", r:"Os decretos de Deus são o seu propósito eterno, segundo o conselho da sua vontade, pelo qual, para a sua própria glória, Ele predestinou tudo o que acontece." },
+  { n:"P.8", p:"Como executa Deus os seus decretos?", r:"Deus executa os seus decretos nas obras de criação e de providência." },
+  { n:"P.14", p:"O que é o pecado?", r:"O pecado é qualquer falta de conformidade com a lei de Deus, ou transgressão da mesma." },
+  { n:"P.21", p:"Quem é o Redentor dos eleitos de Deus?", r:"O único Redentor dos eleitos de Deus é o Senhor Jesus Cristo, o qual, sendo o Filho eterno de Deus, se fez homem, e assim foi e continua a ser, Deus e homem em duas naturezas distintas e em uma só pessoa, para sempre." },
+  { n:"P.31", p:"O que é a justificação?", r:"A justificação é um ato de livre graça de Deus, pelo qual ele perdoa todos os nossos pecados e nos aceita como justos diante de si, somente por causa da justiça de Cristo, que é imputada a nós e recebida somente pela fé." },
+  { n:"P.88", p:"Quais são os meios exteriores e ordinários pelos quais Cristo nos comunica os benefícios da redenção?", r:"Os meios exteriores e ordinários pelos quais Cristo nos comunica os benefícios da sua redenção são as suas ordenanças, especialmente a Palavra, os Sacramentos e a Oração; os quais todos são eficazes aos eleitos para a salvação." },
+];
+
+const CAT_MAIOR = [
+  { n:"P.1", p:"Qual é o fim principal e maior do homem?", r:"O fim principal e maior do homem é glorificar a Deus e fruir d'Ele plenamente para sempre." },
+  { n:"P.5", p:"As Escrituras manifestam claramente que há mais do que um Deus?", r:"As Escrituras manifestam que há somente um Deus vivo e verdadeiro; mas, nessa unidade da Divindade, há três Pessoas de uma mesma substância, poder e eternidade: Deus Pai, Deus Filho e Deus Espírito Santo." },
+  { n:"P.12", p:"O que são os decretos de Deus?", r:"Os decretos de Deus são o sapientíssimo, livre e sagrado propósito de sua vontade, pelo qual, desde toda a eternidade, ele ordena imutavelmente tudo o que acontece, especialmente em relação aos anjos e aos homens, para a manifestação da glória de sua misericórdia e justiça." },
+  { n:"P.36", p:"Quem é o Mediador do pacto da graça?", r:"O único Mediador do pacto da graça é o Senhor Jesus Cristo, que, sendo o eterno Filho de Deus, da mesma substância e igual ao Pai, tomou, no tempo, toda a natureza humana, com todas as suas propriedades essenciais e debilidades comuns, mas sem pecado." },
+  { n:"P.70", p:"O que é a justificação?", r:"A justificação é um ato da livre graça de Deus para com os pecadores, pelo qual Ele perdoa todos os seus pecados, aceita a suas pessoas como justas diante de si e somente por amor de Cristo, imputando-lhes a justiça de Cristo e recebendo a fé deles, não como sendo sua própria justiça, mas como o instrumento pelo qual se apoderam de Cristo e de sua justiça." },
+  { n:"P.75", p:"O que é a santificação?", r:"A santificação é obra da graça livre de Deus, pela qual os eleitos são renovados no ser interior, segundo a imagem de Deus, e o princípio dominante do pecado, que neles existe, vai sendo cada vez mais mortificado, enquanto a graça salvadora é cada vez mais vivificada e fortalecida." },
+];
+
+const GOVERNO = [
+  { cap: "O Governo Presbiteriano", tag: "Estrutura", body: "O governo da Igreja é exercido pelos presbíteros ou anciãos, que são de dois tipos: os presbíteros governantes (ou simplesmente, presbíteros) e os presbíteros ensinantes (ou pastores). Os diáconos formam a terceira ordem dos oficiais da Igreja e cuidam das obras de misericórdia e das finanças." },
+  { cap: "A Sessão", tag: "Concílio Local", body: "A Sessão é o concílio que governa a congregação local. É composta pelo pastor(es) e pelos presbíteros eleitos pela congregação. A Sessão tem autoridade para admitir e disciplinar membros, supervisionar a instrução religiosa, cuidar dos pobres e governar a vida da congregação." },
+  { cap: "O Presbitério Regional", tag: "Concílio Regional", body: "O Presbitério é composto pelos pastores e um presbítero eleito por cada congregação dentro de uma área geográfica determinada. Ele supervisiona o trabalho das igrejas locais, ordena e disciplina os pastores e resolve apelações das Sessões." },
+  { cap: "O Sínodo", tag: "Concílio Intermediário", body: "O Sínodo é composto pelos pastores e presbíteros representantes dos Presbitérios que o compõem. Ele cuida de questões que envolvem múltiplos presbitérios e serve como instância de apelação acima dos presbitérios." },
+  { cap: "A Assembleia Geral", tag: "Concílio Supremo", body: "A Assembleia Geral é o concílio mais alto da Igreja Presbiteriana. Ela representa toda a Igreja e tem autoridade para tratar de qualquer matéria eclesiástica, declarar a doutrina da Igreja, estabelecer diretrizes e revisar os atos dos concílios subordinados." },
+  { cap: "Os Membros da Igreja", tag: "Membros", body: "Tornam-se membros da Igreja os que, havendo sido batizados, professam publicamente sua fé em Jesus Cristo e se comprometem a viver na obediência a Deus. Os membros têm o direito de participar dos sacramentos, de receber cuidado pastoral e de votar nas eleições congregacionais." },
+];
+
+const EVENTS = [
+  { day:2, time:"10h00", title:"Culto Dominical", local:"Templo Principal" },
+  { day:2, time:"18h00", title:"Culto Noturno — Ceia do Senhor", local:"Templo Principal" },
+  { day:5, time:"19h30", title:"Estudo Bíblico", local:"Sala de Reuniões" },
+  { day:9, time:"10h00", title:"Culto Dominical", local:"Templo Principal" },
+  { day:12, time:"20h00", title:"Reunião de Homens", local:"Sala 2" },
+  { day:14, time:"19h30", title:"Estudo Bíblico", local:"Sala de Reuniões" },
+  { day:15, time:"09h00", title:"Reunião de Mulheres", local:"Templo Principal" },
+  { day:16, time:"10h00", title:"Culto Dominical", local:"Templo Principal" },
+  { day:19, time:"20h00", title:"Reunião de Jovens (UPA)", local:"Sala de Jovens" },
+  { day:21, time:"19h30", title:"Estudo Bíblico", local:"Sala de Reuniões" },
+  { day:22, time:"09h00", title:"Seminário: Confissão de Fé", local:"Templo Principal" },
+  { day:23, time:"10h00", title:"Culto Dominical", local:"Templo Principal" },
+  { day:23, time:"18h00", title:"Culto de Louvor e Adoração", local:"Templo Principal" },
+  { day:26, time:"20h00", title:"Reunião de Jovens (UPA)", local:"Sala de Jovens" },
+  { day:28, time:"19h30", title:"Estudo Bíblico", local:"Sala de Reuniões" },
+  { day:30, time:"10h00", title:"Culto Dominical", local:"Templo Principal" },
+];
+
+const MEMBERS = [
+  "André Meireles","Beatriz Santos","Carlos Silva","Claudia Ferreira",
+  "Daniel Oliveira","Eliane Costa","Fernanda Lima","Gabriel Rocha",
+  "Helena Alves","João Ferreira","Juliana Martins","Lucas Pereira",
+  "Maria Santos","Marcos Oliveira","Natalia Souza","Pedro Carvalho",
+  "Patrícia Nunes","Rafael Mendes","Sandra Costa","Tiago Lima",
+];
+
+// ── STATE ──────────────────────────────────────────────────
+let currentUser = null;
+let calDate = new Date();
+let devoCount = 0;
+const TOTAL_DEVO = 14;
+
+// ── LOGIN ──────────────────────────────────────────────────
+function doLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!name) { alert('Por favor, insira seu nome.'); return; }
+  if (pass !== 'horizonte2025') { alert('Senha incorreta. Fale com um diácono.'); return; }
+  currentUser = name;
+  document.getElementById('userBadge').textContent = name.split(' ')[0] + ' ↩';
+  document.getElementById('splash').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  initApp();
+}
+
+function doLogout() {
+  if (!confirm('Deseja sair?')) return;
+  document.getElementById('splash').classList.remove('hide');
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ── INIT ──────────────────────────────────────────────────
+function initApp() {
+  // Verse of day
+  const v = VERSES[new Date().getDay() % VERSES.length];
+  document.getElementById('verseText').textContent = v.t;
+  document.getElementById('verseRef').textContent = '— ' + v.r;
+
+  // Westminster
+  renderAccordion('westminsterList', WESTMINSTER, 'cap', 'tag', 'body');
+  renderAccordionQA('catBreveList', CAT_BREVE, 'gold');
+  renderAccordionQA('catMaiorList', CAT_MAIOR, 'blue');
+  renderAccordion('governoList', GOVERNO, 'cap', 'tag', 'body');
+
+  // Members
+  const ml = document.getElementById('membList');
+  MEMBERS.forEach(m => {
+    ml.innerHTML += `<div class="member-card">
+      <div class="member-avatar">${m[0]}</div>
+      <div class="member-info"><h4>${m}</h4><p>Membro ativo</p></div>
+    </div>`;
+  });
+
+  // Calendar
+  renderCalendar();
+
+  // Bible chapters
+  updateChapterOptions();
+
+  // Progress
+  updateProgress();
+}
+
+function renderAccordion(id, data, capKey, tagKey, bodyKey) {
+  const el = document.getElementById(id);
+  el.innerHTML = data.map((d, i) => `
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <h3>${d[capKey]}</h3>
+        <span class="chev">▾</span>
+      </div>
+      <div class="accordion-body">
+        <span class="tag gold">${d[tagKey]}</span>
+        <p>${d[bodyKey]}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAccordionQA(id, data, tagColor) {
+  const el = document.getElementById(id);
+  el.innerHTML = data.map(d => `
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <h3>${d.n} — ${d.p}</h3>
+        <span class="chev">▾</span>
+      </div>
+      <div class="accordion-body">
+        <span class="tag ${tagColor}">Resposta</span>
+        <p>${d.r}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAcc(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+// ── NAV ──────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const nb = document.getElementById('nav-' + id);
+  if (nb) nb.classList.add('active');
+}
+
+// ── PRESBY TABS ──────────────────────────────────────────
+function showPresby(tab) {
+  document.querySelectorAll('#sec-confissoes .presby-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#sec-confissoes .presby-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('presby-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showPresbyTab(tab) {
+  document.querySelectorAll('#sec-presby .presby-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#sec-presby .presby-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('presby-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── CALENDAR ──────────────────────────────────────────────
+function renderCalendar() {
+  const year = calDate.getFullYear();
+  const month = calDate.getMonth();
+  const today = new Date();
+
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('calMonthLabel').textContent = months[month] + ' ' + year;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  let html = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+    .map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+  for (let i = 0; i < firstDay; i++) {
+    const prevDay = new Date(year, month, -firstDay + i + 1).getDate();
+    html += `<div class="cal-day other-month">${prevDay}</div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    const hasEvent = EVENTS.some(e => e.day === d);
+    html += `<div class="cal-day ${isToday?'today':''} ${hasEvent?'has-event':''}">${d}</div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = html;
+
+  // Events list
+  const evHtml = EVENTS.map(e => `
+    <div class="event-item">
+      <div class="event-time">${e.time}</div>
+      <div class="event-info">
+        <h4>${e.title}</h4>
+        <p>📍 ${e.local} · Dia ${e.day}</p>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('eventsList').innerHTML = evHtml;
+}
+
+function changeMonth(dir) {
+  calDate.setMonth(calDate.getMonth() + dir);
+  renderCalendar();
+}
+
+// ── BIBLE ──────────────────────────────────────────────────
+function updateChapterOptions() {
+  const chapters = { gn:50,ex:40,lv:27,nm:36,dt:34,js:24,jz:21,rt:4,
+    '1sm':31,'2sm':24,sl:150,pv:31,ec:12,is:66,jr:52,dn:12,mt:28,mc:16,
+    lc:24,jo:21,at:28,rm:16,'1co':16,'2co':13,gl:6,ef:6,fp:4,cl:4,'1ts':5,
+    hb:13,tg:5,'1pe':5,'1jo':5,ap:22 };
+  const book = document.getElementById('bibleBook').value;
+  const max = chapters[book] || 1;
+  let opts = '';
+  for (let i = 1; i <= max; i++) opts += `<option value="${i}">${i}</option>`;
+  document.getElementById('bibleChapter').innerHTML = opts;
+}
+
+document.getElementById('bibleBook').addEventListener('change', updateChapterOptions);
+
+const BIBLE_SAMPLE = {
+  sl_23: [
+    "O SENHOR é o meu pastor; nada me faltará.",
+    "Deitar-me faz em verdes pastos; guia-me mansamente a águas tranquilas.",
+    "Refrigera a minha alma; guia-me pelas veredas da justiça, por amor do seu nome.",
+    "Ainda que eu andasse pelo vale da sombra da morte, não temeria mal algum, porque tu estás comigo; o teu bordão e o teu cajado me consolam.",
+    "Preparas uma mesa perante mim na presença dos meus inimigos; unges a minha cabeça com óleo; o meu cálice transborda.",
+    "Certamente que a bondade e a misericórdia me seguirão todos os dias da minha vida; e habitarei na casa do SENHOR por longos dias.",
+  ],
+  jo_3: [
+    "Havia entre os fariseus um homem chamado Nicodemos, um dos príncipes dos judeus.",
+    "Este foi ter de noite com Jesus e disse-lhe: Rabi, sabemos que és Mestre vindo da parte de Deus, porque ninguém pode fazer estes sinais que tu fazes, se Deus não for com ele.",
+    "Jesus respondeu e disse-lhe: Na verdade, na verdade te digo que aquele que não nascer de novo não pode ver o reino de Deus.",
+    "Disse-lhe Nicodemos: Como pode um homem nascer sendo velho? Pode entrar segunda vez no ventre de sua mãe e nascer?",
+    "Jesus respondeu: Na verdade, na verdade te digo que aquele que não nascer da água e do Espírito não pode entrar no reino de Deus.",
+    "O que é nascido da carne é carne; e o que é nascido do Espírito é espírito.",
+    "Não te admires de que eu te disse: Necessário vos é nascer de novo.",
+    "O vento assopra onde quer, e ouves a sua voz, mas não sabes de onde vem e para onde vai; assim é todo aquele que é nascido do Espírito.",
+    "Nicodemos respondeu e disse-lhe: Como pode ser isso?",
+    "Jesus respondeu e disse-lhe: Tu és mestre em Israel e não sabes estas coisas?",
+    "Na verdade, na verdade te digo que nós falamos o que sabemos e testificamos o que vimos, e não recebeis o nosso testemunho.",
+    "Se vos tenho dito cousas terrestres e não credes, como crereis se vos disser as celestiais?",
+    "E ninguém subiu ao céu senão o que desceu do céu, o Filho do homem, que está no céu.",
+    "E, como Moisés levantou a serpente no deserto, assim importa que o Filho do homem seja levantado,",
+    "para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+    "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+    "Porque Deus enviou o seu Filho ao mundo, não para que condenasse o mundo, mas para que o mundo fosse salvo por ele.",
+  ],
+};
+
+function loadBible() {
+  const book = document.getElementById('bibleBook').value;
+  const chap = document.getElementById('bibleChapter').value;
+  const ver  = document.getElementById('bibleVersion').value;
+  const key  = book + '_' + chap;
+  const area = document.getElementById('bibleText');
+
+  if (BIBLE_SAMPLE[key]) {
+    area.innerHTML = BIBLE_SAMPLE[key].map((v, i) =>
+      `<div class="verse-line"><span class="verse-num">${i+1}</span>${v}</div>`
+    ).join('');
+    return;
+  }
+
+  area.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px;">⏳ Carregando...</p>';
+
+  const bookMap = {
+    gn:'genesis',ex:'exodus',lv:'leviticus',nm:'numbers',dt:'deuteronomy',
+    js:'joshua',jz:'judges',rt:'ruth','1sm':'1+samuel','2sm':'2+samuel',
+    sl:'psalms',pv:'proverbs',ec:'ecclesiastes',is:'isaiah',jr:'jeremiah',
+    dn:'daniel',mt:'matthew',mc:'mark',lc:'luke',jo:'john',at:'acts',
+    rm:'romans','1co':'1+corinthians','2co':'2+corinthians',gl:'galatians',
+    ef:'ephesians',fp:'philippians',cl:'colossians','1ts':'1+thessalonians',
+    hb:'hebrews',tg:'james','1pe':'1+peter','1jo':'1+john',ap:'revelation'
+  };
+
+  const bk = bookMap[book] || book;
+  fetch(`https://bible-api.com/${bk}+${chap}?translation=almeida`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.verses) {
+        area.innerHTML = data.verses.map(v =>
+          `<div class="verse-line"><span class="verse-num">${v.verse}</span>${v.text.trim()}</div>`
+        ).join('');
+      } else {
+        area.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px;">
+          Versículo não encontrado.<br><small>Versão: ${ver} — ${book} ${chap}</small></p>`;
+      }
+    })
+    .catch(() => {
+      area.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px;">
+        ⚠️ Sem conexão com a internet.<br>
+        <small>Conecte-se para carregar a Bíblia completa.<br>
+        Salmo 23 e João 3 estão disponíveis offline.</small></p>`;
+    });
+}
+
+function prevChapter() {
+  const s = document.getElementById('bibleChapter');
+  if (s.selectedIndex > 0) { s.selectedIndex--; loadBible(); }
+}
+function nextChapter() {
+  const s = document.getElementById('bibleChapter');
+  if (s.selectedIndex < s.options.length - 1) { s.selectedIndex++; loadBible(); }
+}
+
+// ── DEVO ──────────────────────────────────────────────────
+function toggleDevo(item) {
+  const check = item.querySelector('.devo-check');
+  const done = check.classList.contains('done');
+  if (done) {
+    check.classList.remove('done');
+    check.textContent = '☐';
+    devoCount = Math.max(0, devoCount - 1);
+  } else {
+    check.classList.add('done');
+    check.textContent = '✓';
+    devoCount++;
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((devoCount / TOTAL_DEVO) * 100);
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progLabel').textContent =
+    `${devoCount} de ${TOTAL_DEVO} dias completados esta semana`;
+}
+
+// ── MODALS ──────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function submitPrayer() {
+  const name = document.getElementById('prayerName').value || 'Anônimo';
+  const text = document.getElementById('prayerText').value;
+  if (!text.trim()) { alert('Por favor, descreva seu pedido.'); return; }
+  alert(`✅ Pedido de oração de "${name}" enviado! Os líderes orarão por você.`);
+  document.getElementById('prayerText').value = '';
+  closeModal('prayerModal');
+}
+
+function submitContact() {
+  const subj = document.getElementById('contactSubj').value;
+  const msg  = document.getElementById('contactMsg').value;
+  if (!subj.trim() || !msg.trim()) { alert('Por favor, preencha o assunto e a mensagem.'); return; }
+  alert('✅ Mensagem enviada ao pastor! Você receberá uma resposta em breve.');
+  document.getElementById('contactSubj').value = '';
+  document.getElementById('contactMsg').value = '';
+  closeModal('contactModal');
+}
+</script>
+</body>
+</html>
